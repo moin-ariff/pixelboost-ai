@@ -101,23 +101,29 @@ def upscale():
     except Exception as e:
         return jsonify({'success': False, 'message': f'AI processing error: {str(e)}'}), 500
 
-    # Upload output to Cloudinary
-    try:
-        output_upload = cloudinary.uploader.upload(
-            output_path,
-            folder='ai-upscaler/upscaled',
-            public_id=f'upscaled_{unique_id}_{scale}',
-            resource_type='image'
-        )
-        cloud_url = output_upload['secure_url']
-        print(f'[INFO] Output uploaded to Cloudinary: {cloud_url}')
+# Upload output to Cloudinary (only 2x and 4x — small files)
+    if scale in ('2x', '4x'):
+        try:
+            output_upload = cloudinary.uploader.upload(
+                output_path,
+                folder='ai-upscaler/upscaled',
+                public_id=f'upscaled_{unique_id}_{scale}',
+                resource_type='image'
+            )
+            cloud_url = output_upload['secure_url']
+            print(f'[INFO] Output uploaded to Cloudinary: {cloud_url}')
 
-        # Delete local files to save storage
-        os.remove(input_path)
-        os.remove(output_path)
+            # Delete local files
+            os.remove(input_path)
+            os.remove(output_path)
 
-    except Exception as e:
-        print(f'[WARNING] Cloudinary output upload failed: {e}')
+        except Exception as e:
+            print(f'[WARNING] Cloudinary upload failed: {e}')
+            cloud_url = f'/download/{unique_id}/{scale}'
+    else:
+        # 8x and 16x — serve directly for perfect quality
+        print(f'[INFO] {scale} image — serving directly (max quality)')
+        os.remove(input_path)  # Delete input only, keep output
         cloud_url = f'/download/{unique_id}/{scale}'
 
     return jsonify({
@@ -134,7 +140,20 @@ def download(output_id, scale):
     path = os.path.join(OUTPUT_FOLDER, f'{output_id}_{scale}_upscaled.jpg')
     if not os.path.exists(path):
         return jsonify({'error': 'File not found'}), 404
-    return send_file(path, mimetype='image/jpeg', as_attachment=False)
+    
+    # Send file then delete it
+    response = send_file(path, mimetype='image/jpeg', as_attachment=False)
+    
+    @response.call_on_close
+    def delete_after_send():
+        try:
+            if os.path.exists(path):
+                os.remove(path)
+                print(f'[INFO] Local file deleted after download: {path}')
+        except Exception as e:
+            print(f'[WARNING] Could not delete file: {e}')
+    
+    return response
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
