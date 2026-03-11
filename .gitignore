@@ -1,7 +1,5 @@
 .env
 venv/
-uploads/
-outputs/
 __pycache__/
 *.pyc
 *.pth
