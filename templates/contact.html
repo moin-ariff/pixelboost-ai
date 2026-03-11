@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact — PixelBoost AI</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-pixel">Pixel</span><span class="logo-boost">Boost</span><span class="logo-ai"> AI</span>
+      </a>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link">Home</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/developer" class="nav-link">Developer</a></li>
+        <li><a href="/privacy" class="nav-link">Privacy Policy</a></li>
+        <li><a href="/contact" class="nav-link active">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="page-container">
+
+    <!-- Hero -->
+    <section class="page-hero">
+      <h1>Get In <span class="highlight">Touch</span></h1>
+      <p>Have a question or feedback? We'd love to hear from you.</p>
+    </section>
+
+    <!-- Contact Layout -->
+    <div class="contact-layout">
+
+      <!-- Contact Form -->
+      <div class="contact-form-card">
+        <h2>Send a Message</h2>
+        <div id="formSuccess" class="form-success" style="display:none">
+          ✅ Your message has been sent successfully! We'll get back to you soon.
+        </div>
+        <div id="formError" class="form-error" style="display:none">
+          ❌ Something went wrong. Please try again or email us directly.
+        </div>
+
+        <div class="form-group">
+          <label for="contactName">Your Name</label>
+          <input type="text" id="contactName" placeholder="John Doe">
+        </div>
+
+        <div class="form-group">
+          <label for="contactEmail">Your Email</label>
+          <input type="email" id="contactEmail" placeholder="john@example.com">
+        </div>
+
+        <div class="form-group">
+          <label for="contactSubject">Subject</label>
+          <input type="text" id="contactSubject" placeholder="How can we help?">
+        </div>
+
+        <div class="form-group">
+          <label for="contactMessage">Message</label>
+          <textarea id="contactMessage" rows="6" placeholder="Write your message here..."></textarea>
+        </div>
+
+        <button class="btn-primary contact-submit" id="submitBtn" onclick="submitForm()">
+          Send Message →
+        </button>
+      </div>
+
+      <!-- Contact Info -->
+      <div class="contact-info-card">
+
+        <h2>Contact Information</h2>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">📧</div>
+          <div>
+            <h4>Email</h4>
+            <a href="mailto:moinarif309@gmail.com">moinarif309@gmail.com</a>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">💻</div>
+          <div>
+            <h4>GitHub</h4>
+            <a href="https://github.com/moin-ariff" target="_blank">github.com/moin-ariff</a>
+          </div>
+        </div>
+
+        <div class="contact-info-item">
+          <div class="contact-info-icon">🔗</div>
+          <div>
+            <h4>LinkedIn</h4>
+            <a href="https://www.linkedin.com/in/moin-ariff" target="_blank">linkedin.com/in/moin-ariff</a>
+          </div>
+        </div>
+
+        <!-- Response Time -->
+        <div class="response-box">
+          <h4>⏱ Response Time</h4>
+          <p>We typically respond within 24-48 hours on business days.</p>
+        </div>
+
+        <!-- FAQ -->
+        <div class="faq-box">
+          <h4>❓ Common Questions</h4>
+          <div class="faq-item">
+            <p class="faq-q">Is PixelBoost AI free?</p>
+            <p class="faq-a">Yes, completely free to use.</p>
+          </div>
+          <div class="faq-item">
+            <p class="faq-q">What file types are supported?</p>
+            <p class="faq-a">JPG, PNG, WebP and BMP up to 20MB.</p>
+          </div>
+          <div class="faq-item">
+            <p class="faq-q">Are my images stored?</p>
+            <p class="faq-a">Images are deleted after processing. See our Privacy Policy.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 PixelBoost AI — Built by <a href="/developer">Moin Arif</a></p>
+  </footer>
+
+  <script src="/static/nav.js"></script>
+  <script>
+    function submitForm() {
+      const name    = document.getElementById('contactName').value.trim();
+      const email   = document.getElementById('contactEmail').value.trim();
+      const subject = document.getElementById('contactSubject').value.trim();
+      const message = document.getElementById('contactMessage').value.trim();
+      const btn     = document.getElementById('submitBtn');
+
+      if (!name || !email || !message) {
+        document.getElementById('formError').style.display = 'block';
+        document.getElementById('formError').textContent = '❌ Please fill in all required fields.';
+        return;
+      }
+
+      // Open email client with prefilled data
+      const mailto = `mailto:moinarif309@gmail.com?subject=${encodeURIComponent(subject || 'PixelBoost AI Contact')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
+      window.location.href = mailto;
+
+      btn.textContent = 'Opening email client...';
+      btn.disabled = true;
+
+      setTimeout(() => {
+        document.getElementById('formSuccess').style.display = 'block';
+        btn.textContent = 'Send Message →';
+        btn.disabled = false;
+      }, 1500);
+    }
+  </script>
+</body>
+</html>

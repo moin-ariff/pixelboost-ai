@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PixelBoost AI — AI Image Upscaler</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <span class="logo-pixel">Pixel</span><span class="logo-boost">Boost</span><span class="logo-ai"> AI</span>
+      </a>
+      <button class="nav-toggle" id="navToggle">&#9776;</button>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="/" class="nav-link active">Home</a></li>
+        <li><a href="/about" class="nav-link">About</a></li>
+        <li><a href="/developer" class="nav-link">Developer</a></li>
+        <li><a href="/privacy" class="nav-link">Privacy Policy</a></li>
+        <li><a href="/contact" class="nav-link">Contact</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container">
+    <header>
+      <h1>AI Image Upscaler</h1>
+      <p>Upload a low-resolution image and get an AI-enhanced high quality version</p>
+    </header>
+
+    <!-- Scale Selector -->
+    <div class="scale-selector">
+      <p class="scale-label">Choose Upscale Factor:</p>
+      <div class="scale-btns">
+        <button class="scale-btn" id="btn2x" data-scale="2x">
+          2x <span>Fast</span>
+        </button>
+        <button class="scale-btn active" id="btn4x" data-scale="4x">
+          4x <span>Recommended</span>
+        </button>
+        <button class="scale-btn" id="btn8x" data-scale="8x">
+          8x <span>High Quality</span>
+        </button>
+        <button class="scale-btn" id="btn16x" data-scale="16x">
+          16x <span>Ultra Quality</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Upload Area -->
+    <div class="upload-box" id="dropZone">
+      <div class="upload-icon">⬆</div>
+      <p>Drag & drop your image here, or</p>
+      <label class="btn-upload">
+        Choose File
+        <input type="file" id="fileInput" accept="image/*" hidden>
+      </label>
+      <p class="hint">JPG, PNG, WebP, BMP — Max 20 MB</p>
+    </div>
+
+    <!-- Preview -->
+    <div class="preview-section" id="previewSection" style="display:none">
+      <div class="preview-panel">
+        <h3>Original Image</h3>
+        <img id="previewOriginal" alt="Original">
+        <p class="img-info" id="originalInfo"></p>
+      </div>
+      <div class="preview-panel">
+        <h3 id="outputTitle">Upscaled Image</h3>
+        <div id="outputPlaceholder">
+          <div class="spinner" id="spinner" style="display:none"></div>
+          <p id="outputStatus">Click Upscale to process your image.</p>
+        </div>
+        <img id="previewOutput" alt="Upscaled" style="display:none">
+        <p class="img-info" id="outputInfo"></p>
+      </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="actions" id="actions" style="display:none">
+      <button class="btn-primary" id="upscaleBtn">Upscale Image</button>
+      <a class="btn-secondary" id="downloadBtn" style="display:none">Download (JPG)</a>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>© 2025 PixelBoost AI — Built by <a href="/developer">Moin Arif</a></p>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>

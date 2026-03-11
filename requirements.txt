@@ -1,0 +1,11 @@
+flask
+flask-cors
+cloudinary
+python-dotenv
+basicsr==1.4.2
+realesrgan
+torch==2.0.1
+torchvision==0.15.2
+opencv-python-headless
+Pillow
+numpy<2
