@@ -19,6 +19,7 @@ const btn16x         = document.getElementById('btn16x');
 
 let selectedFile  = null;
 let selectedScale = '4x';
+let pollInterval  = null;
 
 // ── Scale Buttons ──────────────────────────────────────────
 btn2x.addEventListener('click',  () => setScale('2x'));
@@ -93,6 +94,9 @@ upscaleBtn.addEventListener('click', async () => {
     return;
   }
 
+  // Clear previous poll
+  if (pollInterval) clearInterval(pollInterval);
+
   upscaleBtn.disabled    = true;
   upscaleBtn.textContent = 'Processing...';
   spinner.style.display      = 'block';
@@ -112,39 +116,73 @@ upscaleBtn.addEventListener('click', async () => {
 
     if (!data.success) throw new Error(data.message);
 
-    const outputUrl = data.image_url;
-    previewOut.src  = outputUrl + '?t=' + Date.now();
-
-    previewOut.onload = () => {
-      spinner.style.display    = 'none';
-      previewOut.style.display = 'block';
-      outputInfo.textContent   =
-        `${previewOut.naturalWidth} x ${previewOut.naturalHeight} pixels (${data.scale})`;
-
-      // Fetch from Cloudinary and trigger direct download
-      fetch(outputUrl)
-        .then(res => res.blob())
-        .then(blob => {
-          const blobUrl            = window.URL.createObjectURL(blob);
-          downloadBtn.href         = blobUrl;
-          downloadBtn.target       = '';
-          downloadBtn.download     = `upscaled_${data.scale}_${data.output_id}.jpg`;
-          downloadBtn.style.display = 'inline-block';
-        });
-
-      setStatus(`Upscaling complete! Your ${data.scale} enhanced image is ready!`, 'success');
-    };
+    // Start polling
+    pollInterval = setInterval(() => checkStatus(data.job_id), 5000);
 
   } catch (err) {
     spinner.style.display      = 'none';
     outputStatus.style.display = 'block';
     outputStatus.textContent   = 'An error occurred. Please try again.';
     setStatus('Error: ' + err.message, 'error');
-  } finally {
     upscaleBtn.disabled    = false;
     upscaleBtn.textContent = `Upscale Image ${selectedScale}`;
   }
 });
+
+// ── Polling ────────────────────────────────────────────────
+async function checkStatus(jobId) {
+  try {
+    const res  = await fetch(`/status/${jobId}`);
+    const data = await res.json();
+
+    if (data.status === 'done') {
+      clearInterval(pollInterval);
+      showResult(data.image_url, data.scale, jobId);
+
+    } else if (data.status === 'error') {
+      clearInterval(pollInterval);
+      spinner.style.display      = 'none';
+      outputStatus.style.display = 'block';
+      outputStatus.textContent   = 'An error occurred.';
+      setStatus('Error: ' + data.error, 'error');
+      upscaleBtn.disabled    = false;
+      upscaleBtn.textContent = `Upscale Image ${selectedScale}`;
+
+    } else {
+      // Still processing
+      setStatus(`AI processing in progress — ${data.status}...`, 'info');
+    }
+
+  } catch (err) {
+    console.error('Polling error:', err);
+  }
+}
+
+// ── Show Result ────────────────────────────────────────────
+function showResult(outputUrl, scale, jobId) {
+  previewOut.src = outputUrl + '?t=' + Date.now();
+
+  previewOut.onload = () => {
+    spinner.style.display    = 'none';
+    previewOut.style.display = 'block';
+    outputInfo.textContent   =
+      `${previewOut.naturalWidth} x ${previewOut.naturalHeight} pixels (${scale})`;
+
+    fetch(outputUrl)
+      .then(res => res.blob())
+      .then(blob => {
+        const blobUrl             = window.URL.createObjectURL(blob);
+        downloadBtn.href          = blobUrl;
+        downloadBtn.target        = '';
+        downloadBtn.download      = `upscaled_${scale}_${jobId}.jpg`;
+        downloadBtn.style.display = 'inline-block';
+      });
+
+    setStatus(`Upscaling complete! Your ${scale} enhanced image is ready!`, 'success');
+    upscaleBtn.disabled    = false;
+    upscaleBtn.textContent = `Upscale Image ${selectedScale}`;
+  };
+}
 
 function setStatus(msg, type = '') {
   statusBar.textContent = msg;
