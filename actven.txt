@@ -1,0 +1,4 @@
+ Venv activate karo:
+venv\Scripts\activate
+Yeh dikhega:
+(venv) D:\ai-upscaler>

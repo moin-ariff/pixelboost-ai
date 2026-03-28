@@ -17,8 +17,10 @@ WORKDIR /app
 COPY requirements.txt .
 
 # Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
-
+RUN pip install --no-cache-dir setuptools==59.6.0 && \
+    pip install --no-cache-dir "nvidia-cublas==13.1.0.3.*" && \
+    pip install --no-cache-dir -r requirements.txt
+    
 # Copy project files
 COPY . .
 

@@ -2,6 +2,7 @@ flask
 flask-cors
 cloudinary
 python-dotenv
+setuptools==59.6.0
 basicsr==1.4.2
 realesrgan
 torch==2.0.1
